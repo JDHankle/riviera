@@ -396,6 +396,12 @@ at the entry line of the script."
   tempdir
   )
 
+(defun riviera-delete-buffers()
+  (mapc (lambda(buffer)
+          (if (string-prefix-p "*RIVIERA" (buffer-name buffer))
+              (kill-buffer buffer)))
+        (buffer-list)))
+
 (defmacro riviera-with-current-session (binding &rest body)
   (declare (indent 1)
            (debug (symbolp &rest form)))
@@ -755,7 +761,8 @@ Return a cmd list."
 
 (defun riviera-dbgp-command-stop (session)
   "Send \`stop\' command."
-  (riviera-dbgp-send-command session "stop"))
+  (riviera-dbgp-send-command session "stop")
+  (riviera-delete-buffers))
 
 ;;; eval
 
