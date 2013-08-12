@@ -396,7 +396,7 @@ at the entry line of the script."
   tempdir
   )
 
-(defun riviera-delete-buffers()
+(defun riviera-delete-buffers(&rest args)
   (mapc (lambda(buffer)
           (if (string-prefix-p "*RIVIERA" (buffer-name buffer))
               (kill-buffer buffer)))
@@ -761,8 +761,7 @@ Return a cmd list."
 
 (defun riviera-dbgp-command-stop (session)
   "Send \`stop\' command."
-  (riviera-dbgp-send-command session "stop")
-  (riviera-delete-buffers))
+  (riviera-dbgp-send-command session "stop"))
 
 ;;; eval
 
@@ -987,6 +986,7 @@ A source object forms a property list with three properties
            (riviera-session-source session)))
 
 (add-hook 'riviera-session-exit-hook #'riviera-session-source-release)
+(add-hook 'riviera-session-exit-hook #'riviera-delete-buffers)
 
 (defsubst riviera-session-source-get (session fileuri)
   (gethash fileuri (riviera-session-source session)))
