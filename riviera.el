@@ -396,6 +396,16 @@ at the entry line of the script."
   tempdir
   )
 
+(defun riviera-kill-buffers(&rest args)
+  "Kills all buffers whose name start with *RIVIERA.
+ARGS is so it can be used for `riviera-session-exit-hook'.
+
+TODO: Standard buffer names so we don't have to do a string match."
+  (mapc (lambda(buffer)
+          (if (string-prefix-p "*RIVIERA" (buffer-name buffer))
+              (kill-buffer buffer)))
+        (buffer-list)))
+
 (defmacro riviera-with-current-session (binding &rest body)
   (declare (indent 1)
            (debug (symbolp &rest form)))
@@ -980,6 +990,7 @@ A source object forms a property list with three properties
            (riviera-session-source session)))
 
 (add-hook 'riviera-session-exit-hook #'riviera-session-source-release)
+(add-hook 'riviera-session-exit-hook #'riviera-kill-buffers)
 
 (defsubst riviera-session-source-get (session fileuri)
   (gethash fileuri (riviera-session-source session)))
