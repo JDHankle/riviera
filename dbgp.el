@@ -841,7 +841,7 @@ takes over the filter."
       (and output
            (ignore-errors
              (comint-output-filter proc output))))
-    (if (and (not (string-equal "#<killed buffer>" (format "%s" buf))) ; check buffer hasn't been killed
+    (if (and (buffer-live-p buf)
              (with-current-buffer buf
                (setq dbgp-filter-defer-flag nil)
                dbgp-filter-defer-faced))
