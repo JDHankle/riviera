@@ -841,9 +841,10 @@ takes over the filter."
       (and output
            (ignore-errors
              (comint-output-filter proc output))))
-    (if (with-current-buffer buf
-          (setq dbgp-filter-defer-flag nil)
-          dbgp-filter-defer-faced)
+    (if (and (buffer-live-p buf)
+             (with-current-buffer buf
+               (setq dbgp-filter-defer-flag nil)
+               dbgp-filter-defer-faced))
         (dbgp-session-filter proc ""))))
 
 (defun dbgp-session-response-to-chunk ()
