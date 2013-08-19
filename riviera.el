@@ -70,6 +70,7 @@
 
 (eval-and-compile
   (require 'cl)
+  (require 'ido)
   (require 'xml)
   (require 'tree-widget)
   (require 'dbgp))
@@ -1075,6 +1076,13 @@ Or return specific TRAMP spec. (e.g. \"/user@example.com:\""
   :group 'riviera
   :type 'function)
 
+(defcustom riviera-read-file-name 'read-file-name
+  "Function used to read the file name when debugging.
+If one wanted to use ido:
+`(custom-set-variables '(riviera-read-file-name 'ido-read-file-name))'"
+:group 'riviera
+:type 'function)
+
 (defun riviera-session-source-visit-original-file (session fileuri &optional disable-completion)
   (let ((target-path (riviera-session-source-read-file-name session fileuri disable-completion)))
     (and target-path
@@ -1092,8 +1100,8 @@ Or return specific TRAMP spec. (e.g. \"/user@example.com:\""
     ;; local file
     (unless (file-regular-p local-path)
       (while (not (file-regular-p (setq local-path
-                                        (read-file-name "Find local file: "
-                                                        local-path local-path t ""))))
+                                        (funcall riviera-read-file-name "Find local file: "
+                                                 local-path local-path t ""))))
         (beep)))
     (expand-file-name local-path)))
 
@@ -1112,10 +1120,10 @@ Or return specific TRAMP spec. (e.g. \"/user@example.com:\""
                                       (concat path-prefix local-path)
                                     (format "/%s:%s" ip local-path))))
           (while (not (tramp-handle-file-regular-p
-                       (setq find-file-default (read-file-name "Find remote file: "
-                                                               (file-name-directory find-file-default)
-                                                               find-file-default t
-                                                               (file-name-nondirectory find-file-default)))))
+                       (setq find-file-default (funcall riviera-read-file-name "Find remote file: "
+                                                        (file-name-directory find-file-default)
+                                                        find-file-default t
+                                                        (file-name-nondirectory find-file-default)))))
             (beep))
           (require 'tramp)
           (when (tramp-tramp-file-p find-file-default)
