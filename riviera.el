@@ -2293,7 +2293,8 @@ After fetching it calls CALLBACK function."
               (funcall callback session))))))))
 
 (defun riviera-context-fill-buffer (session)
-  "Fill the context buffer with locally stored context list."
+  "Fill the context buffer with locally stored context list.
+   Example: Locals, Superglobals"
   (let ((buf (riviera-session-context-buffer-get session)))
     (when buf
       (with-current-buffer buf
