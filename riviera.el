@@ -2233,7 +2233,8 @@ Child nodes can be short for :property property of TREE."
     (if (riviera-context-property-has-children property)
         (list 'tree-widget
               :tag tag
-              :open (member (cdr (assoc 'name (car (cdr property)))) riviera-expanded-context-variables)
+              :open (member (riviera-context-property-attribute property 'address)
+                            riviera-expanded-context-variables)
               :property property
               :expander 'riviera-context-property-tree-expand
               :expander-p 'riviera-context-property-tree-expand-p)
@@ -2318,14 +2319,10 @@ After fetching it calls CALLBACK function."
         (goto-char (point-min))))))
 
 (defun riviera-tree-widget-notify(widget-tree)
-  (let ((varname (substring-no-properties (widget-get tree :tag)
-                                          0
-                                          (string-match "\\[" (widget-get tree :tag)))))
+  (let ((var-address (riviera-context-property-attribute (widget-get widget-tree :property) 'address)))
     (if (widget-get widget-tree :open)
-        (add-to-list 'riviera-expanded-context-variables varname)
-      (setq riviera-expanded-context-variables (cl-remove varname riviera-expanded-context-variables :test 'string-equal)))))
-
-
+        (add-to-list 'riviera-expanded-context-variables var-address)
+      (setq riviera-expanded-context-variables (cl-remove var-address riviera-expanded-context-variables :test 'string-equal)))))
 
 (defun riviera-context-tree-children-fill (tree &optional tid-save)
   (riviera-with-current-session session
