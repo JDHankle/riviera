@@ -2008,6 +2008,9 @@ the file."
 (defvar riviera-context-loading nil)
 (defvar riviera-context-property-tree-fill-children-hook 'riviera-context-tree-children-fill)
 
+(setq riviera-expanded-context-variables '())
+(add-hook 'tree-widget-after-toggle-functions 'riviera-tree-widget-notify)
+
 (defun riviera-session-context-init (session)
   (setf (riviera-session-context session) (riviera-context-make)))
 (add-hook 'riviera-session-enter-hook #'riviera-session-context-init)
@@ -2230,6 +2233,7 @@ Child nodes can be short for :property property of TREE."
     (if (riviera-context-property-has-children property)
         (list 'tree-widget
               :tag tag
+              :open (member (cdr (assoc 'name (car (cdr property)))) riviera-expanded-context-variables)
               :property property
               :expander 'riviera-context-property-tree-expand
               :expander-p 'riviera-context-property-tree-expand-p)
@@ -2312,6 +2316,16 @@ After fetching it calls CALLBACK function."
                      (mapcar #'riviera-context-property-tree-create-node new))))
           (widget-setup))
         (goto-char (point-min))))))
+
+(defun riviera-tree-widget-notify(widget-tree)
+  (let ((varname (substring-no-properties (widget-get tree :tag)
+                                          0
+                                          (string-match "\\[" (widget-get tree :tag)))))
+    (if (widget-get widget-tree :open)
+        (add-to-list 'riviera-expanded-context-variables varname)
+      (setq riviera-expanded-context-variables (cl-remove varname riviera-expanded-context-variables :test 'string-equal)))))
+
+
 
 (defun riviera-context-tree-children-fill (tree &optional tid-save)
   (riviera-with-current-session session
