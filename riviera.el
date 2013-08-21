@@ -2011,6 +2011,8 @@ the file."
 (setq riviera-expanded-context-variables '())
 (add-hook 'tree-widget-after-toggle-functions 'riviera-tree-widget-notify)
 
+(add-hook 'riviera-after-eval-expression 'riviera-context-mode-refresh)
+
 (defun riviera-session-context-init (session)
   (setf (riviera-session-context session) (riviera-context-make)))
 (add-hook 'riviera-session-enter-hook #'riviera-session-context-init)
@@ -3493,7 +3495,8 @@ Key mapping and other information is described its help page."
      (list (read-from-minibuffer "Eval: "
                                  nil nil nil 'riviera-eval-history))))
   (riviera-with-current-session session
-    (riviera-dbgp-command-eval session expr)))
+    (riviera-dbgp-command-eval session expr))
+  (run-hooks 'riviera-after-eval-expression))
 
 (defun riviera-eval-current-word ()
   "Evaluate a word at where the cursor is pointing."
