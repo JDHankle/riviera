@@ -1,17 +1,17 @@
 * Abstract
 Riviera is a software package that interfaces emacs to DBGp protocl with which you can debug running scripts interactively. Currently DBGp protocol is supported in the following languages with the help of custom extensions.
-** PHP with XDebug 2.0.*
-** Perl, Python, Ruby and Tcl with Komodo Debugger Extensions
++ PHP with XDebug 2.0.*
++ Perl, Python, Ruby and Tcl with Komodo Debugger Extensions
 
 Riviera **is a fork** of [Geben](https://code.google.com/p/geben-on-emacs/). The author did an amazing job with it, however there are a lot of things that make usage of the application harder, and the last update to geben was over 3 years. So we're glad to be forking it and giving back to the open source emacs community.
 
 * Features
-** Continuation Commands: run/stop/step-in/step-over/step-out
-** (Conditial) Breakpoints: set/unset/list
-** Live Evaluation
-** STDOUT/STDERR Redirection
-** Backtrace Listing
-** Variable (Context) Inspection
++ Continuation Commands: run/stop/step-in/step-over/step-out
++ (Conditial) Breakpoints: set/unset/list
++ Live Evaluation
++ STDOUT/STDERR Redirection
++ Backtrace Listing
++ Variable (Context) Inspection
 
 * Getting Started
 1. Unpack Riviera source code package and change directory to the
