@@ -2008,6 +2008,11 @@ the file."
 (defvar riviera-context-loading nil)
 (defvar riviera-context-property-tree-fill-children-hook 'riviera-context-tree-children-fill)
 
+(setq riviera-expanded-context-variables '())
+(add-hook 'tree-widget-after-toggle-functions 'riviera-tree-widget-notify)
+
+(add-hook 'riviera-after-eval-expression 'riviera-context-mode-refresh)
+
 (defun riviera-session-context-init (session)
   (setf (riviera-session-context session) (riviera-context-make)))
 (add-hook 'riviera-session-enter-hook #'riviera-session-context-init)
@@ -2230,6 +2235,8 @@ Child nodes can be short for :property property of TREE."
     (if (riviera-context-property-has-children property)
         (list 'tree-widget
               :tag tag
+              :open (member (riviera-context-property-attribute property 'address)
+                            riviera-expanded-context-variables)
               :property property
               :expander 'riviera-context-property-tree-expand
               :expander-p 'riviera-context-property-tree-expand-p)
@@ -2293,7 +2300,8 @@ After fetching it calls CALLBACK function."
               (funcall callback session))))))))
 
 (defun riviera-context-fill-buffer (session)
-  "Fill the context buffer with locally stored context list."
+  "Fill the context buffer with locally stored context list.
+   Example: Locals, Superglobals"
   (let ((buf (riviera-session-context-buffer-get session)))
     (when buf
       (with-current-buffer buf
@@ -2311,6 +2319,15 @@ After fetching it calls CALLBACK function."
                      (mapcar #'riviera-context-property-tree-create-node new))))
           (widget-setup))
         (goto-char (point-min))))))
+
+(defun riviera-tree-widget-notify(widget-tree)
+  "Takes WIDGET-TREE and gathers the address of the variable just expanded/collapsed,
+if it was expanded it gets added to `riviera-expanded-context-variables' and if it was collapsed
+it gets removed."
+  (let ((var-address (riviera-context-property-attribute (widget-get widget-tree :property) 'address)))
+    (if (widget-get widget-tree :open)
+        (add-to-list 'riviera-expanded-context-variables var-address)
+      (setq riviera-expanded-context-variables (cl-remove var-address riviera-expanded-context-variables :test 'string-equal)))))
 
 (defun riviera-context-tree-children-fill (tree &optional tid-save)
   (riviera-with-current-session session
@@ -3481,7 +3498,8 @@ Key mapping and other information is described its help page."
      (list (read-from-minibuffer "Eval: "
                                  nil nil nil 'riviera-eval-history))))
   (riviera-with-current-session session
-    (riviera-dbgp-command-eval session expr)))
+    (riviera-dbgp-command-eval session expr))
+  (run-hooks 'riviera-after-eval-expression))
 
 (defun riviera-eval-current-word ()
   "Evaluate a word at where the cursor is pointing."
