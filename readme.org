@@ -1,0 +1,80 @@
+* Abstract
+Riviera is a software package that interfaces emacs to DBGp protocl with which you can debug running scripts interactively. Currently DBGp protocol is supported in the following languages with the help of custom extensions.
+** PHP with XDebug 2.0.*
+** Perl, Python, Ruby and Tcl with Komodo Debugger Extensions
+
+Riviera **is a fork** of [Geben](https://code.google.com/p/geben-on-emacs/). The author did an amazing job with it, however there are a lot of things that make usage of the application harder, and the last update to geben was over 3 years. So we're glad to be forking it and giving back to the open source emacs community.
+
+* Features
+** Continuation Commands: run/stop/step-in/step-over/step-out
+** (Conditial) Breakpoints: set/unset/list
+** Live Evaluation
+** STDOUT/STDERR Redirection
+** Backtrace Listing
+** Variable (Context) Inspection
+
+* Getting Started
+1. Unpack Riviera source code package and change directory to the
+   unpacked directory.
+
+<With GNU make command>
+a. run `make'(or `gmake', depends on your environment).
+b. If you are an administrator, Run: sudo make install
+b' Or Run: SITELISP=$HOME/path/to/install make install
+
+<Without GNU make command>
+a. Byte compile 'dbgp.el'.
+b. Byte compile `riviera.el'.
+c. Copy `dbgp.elc', `riviera.elc' and entire `tree-widget' directory to
+   any directory where Emacs can find.(Or add the path to `load-path'
+   list)
+
+<common>
+2. Insert autoload hooks into your .Emacs file.
+    -> (autoload 'riviera "riviera" "PHP Remote Debugger for Emacs" t)
+3. Restart Emacs.
+
+* Usage
+1. Run Emacs.
+
+2. Start riviera, type: M-x riviera
+
+3. Access to the target PHP script page with any browser.
+   You may need to add a query parameter `XDEBUG_SESSION_START' if you
+   configured Xdebug to require manual trigger to start a remote
+   debugging session.
+   e.g.) http://www.example.com/test.php?XDEBUG_SESSION_START=1
+
+4. Soon the server and Riviera establish a debugging session
+   connection. Then Emacs loads the script source code of the entry
+   page in a buffer.
+
+5. Now the buffer is under the minor-mode 'riviera-mode'.
+   You can control the debugger with several keys.
+
+     spc     step into/step over
+     i       step into
+     o       step over
+     r       step out
+     g       run
+     c       run to cursor
+     b       set a breakpoint at a line
+     B       set a breakpoint interactively
+     u       unset a breakpoint at a line
+     U       clear all breakpoints
+     \C-c b  display breakpoint list
+     >       set redirection mode
+     \C-u t  change redirection mode
+     d       display backtrace
+     t       display backtrace
+     v       display context variables
+     \C-c f  visit script file
+     w       where
+     q       stop
+
+   When you hit any unbound key of `riviera-mode', Riviera will ask you to
+   edit the original script file. Say yes and Riviera will attempts to
+   load the script file via `TRAMP'.
+
+6. If you felt you'd debugged enough, it's time to quit Riviera.
+   To quit Riviera, type: M-x riviera-end
