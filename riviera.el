@@ -2321,6 +2321,9 @@ After fetching it calls CALLBACK function."
         (goto-char (point-min))))))
 
 (defun riviera-tree-widget-notify(widget-tree)
+  "Takes WIDGET-TREE and gathers the address of the variable just expanded/collapsed,
+if it was expanded it gets added to `riviera-expanded-context-variables' and if it was collapsed
+it gets removed."
   (let ((var-address (riviera-context-property-attribute (widget-get widget-tree :property) 'address)))
     (if (widget-get widget-tree :open)
         (add-to-list 'riviera-expanded-context-variables var-address)
